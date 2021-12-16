@@ -1,18 +1,43 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import { Input } from "../components";
 import { Button } from "../components";
+import { NavigationProp } from "@react-navigation/native";
+
+interface Props {
+    navigation: any
+}
 
 
-const App: FC = () => {
+
+const App: FC<Props> = (props) => {
 
     const [msg, setMsg] = useState<string | null>(null)
+    const [user, setUser] = useState<any>(null)
+    const db = firebase.firestore()
+
+
     const singOut = () => {
         firebase.auth().signOut()
     }
+
+    const fetchCurrentUser = async () => {
+        const currentUser: any = firebase.auth().currentUser
+        const user_obj = await db.collection('users').doc((currentUser.uid)).get()
+
+
+        setUser({
+            id: user_obj.id,
+            ...user_obj.data()
+        })
+    }
+
+    useEffect(() => {
+        fetchCurrentUser()
+    }, [])
 
     const post = async () => {
         if (msg) {
@@ -22,7 +47,6 @@ const App: FC = () => {
                 approved: false
             }
             try {
-                const db = firebase.firestore()
                 await db.collection('posts').add(data)
             } catch (error) {
                 console.log(error)
@@ -42,6 +66,15 @@ const App: FC = () => {
                 <Input placeholder="Escriba algo aqui malparido" onChangeText={(text) => { setMsg(text) }}></Input>
                 <Button title="Post" onPress={post} />
             </View>
+            {
+                user ? user.isAdmin ? (
+                    <View>
+                        <Button title="Dashboard" onPress={() => {
+                            props.navigation.navigate('dashboard_screen')
+                        }} />
+                    </View>
+                ) : null : null
+            }
         </View>
     )
 }
