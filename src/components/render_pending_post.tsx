@@ -1,12 +1,10 @@
 import React, { FC } from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
-import { Button } from "./index";
-
-const { height, width } = Dimensions.get('screen')
+import { Button, View, Text, StyleSheet, Dimensions } from "react-native";
+const { width } = Dimensions.get('screen')
 
 interface Props {
     message: string,
-    approval: string,
+    approval: any,
     timeStamp: number,
     onApprove: () => void,
     onReject: () => void,

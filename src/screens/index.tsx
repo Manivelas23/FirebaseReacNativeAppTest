@@ -4,7 +4,4 @@ import Home from './home'
 import DashBoard from './dashboard'
 
 
-export { SingUp }
-export { LogIn }
-export { Home }
-export { DashBoard }
+export { SingUp, LogIn, Home, DashBoard }

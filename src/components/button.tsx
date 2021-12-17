@@ -2,9 +2,6 @@ import React, { FC } from "react";
 import { Text, StyleSheet, Dimensions } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-const { height, width } = Dimensions.get('screen')
-
-
 interface Props {
     title: string,
     onPress: () => void,

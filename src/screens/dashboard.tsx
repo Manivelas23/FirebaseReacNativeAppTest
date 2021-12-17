@@ -7,6 +7,7 @@ import 'firebase/compat/firestore';
 import { FlatList } from "react-native-gesture-handler";
 
 const App: FC = () => {
+    let isCancelled = false
 
     const [posts, setPosts] = useState<any>(null)
 
@@ -22,23 +23,28 @@ const App: FC = () => {
     const onReject = (id: string) => {
         alert(`Item with id: ${id} will be approved`)
     }
+
     useEffect(() => {
         fetchPendingPosts()
-    })
+        isCancelled = true;
+    }, [])
+
+    const renderItem = ({ item }: any) => (
+        <ApprovalRender
+            message={item.data().msg}
+            timeStamp={item.data().timeStamp}
+            approval={item.data().approved}
+            onApprove={() => { onApprove(item.id) }}
+            onReject={() => { onReject(item.id) }} />
+    );
 
     return (
         <View style={styles.container}>
-            {/* <Text style={styles.text}>Dashboard Screen</Text> */}
             <FlatList
                 data={posts}
-                renderItem={({ item }) => {
-                    <ApprovalRender
-                        message={item.data().msg}
-                        timeStamp={item.data().timeStamp}
-                        approval={item.data().approved}
-                        onApprove={() => { onApprove(item.id) }}
-                        onReject={() => { onReject(item.id) }} />
-                }} style={styles.list} />
+                renderItem={renderItem}
+                keyExtractor={item => item.id}
+            />
         </View>
     )
 }

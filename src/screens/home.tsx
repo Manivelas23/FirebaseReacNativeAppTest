@@ -5,7 +5,6 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import { Input } from "../components";
 import { Button } from "../components";
-import { NavigationProp } from "@react-navigation/native";
 
 interface Props {
     navigation: any
