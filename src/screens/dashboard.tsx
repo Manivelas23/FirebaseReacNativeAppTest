@@ -1,27 +1,35 @@
 import React, { FC, useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { ApprovalRender } from "../components";
+import { View, Alert, StyleSheet } from "react-native";
+import { ApprovalRender, Button } from "../components";
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import { FlatList } from "react-native-gesture-handler";
 
-const App: FC = () => {
+interface Props {
+    navigation: any
+}
+
+const App: FC<Props> = (props) => {
     let isCancelled = false
 
     const [posts, setPosts] = useState<any>(null)
+    const db = firebase.firestore()
+
 
     const fetchPendingPosts = async () => {
-        const db = firebase.firestore()
-        const posts = await db.collection('posts').where('approved', '==', false).get()
-        setPosts([...posts.docs])
+        await db.collection('posts').where('approved', '==', false).onSnapshot((querySnapShot) => {
+            const documents = querySnapShot.docs;
+            setPosts(documents)
+        })
     }
-    const onApprove = (id: string) => {
-        alert(`Item with id: ${id} will be approved`)
+    const onApprove = async (id: string) => {
+        const post = await db.collection('posts').doc(id).get()
+        post.ref.set({ approved: true }, { merge: true })
     }
 
-    const onReject = (id: string) => {
-        alert(`Item with id: ${id} will be approved`)
+    const onReject = async (id: string) => {
+        await db.collection('posts').doc(id).delete()
     }
 
     useEffect(() => {
@@ -40,6 +48,7 @@ const App: FC = () => {
 
     return (
         <View style={styles.container}>
+            <Button title="Back to Home" onPress={() => { props.navigation.goBack() }} />
             <FlatList
                 data={posts}
                 renderItem={renderItem}

@@ -9,9 +9,6 @@ interface Props {
     message: string,
     approval: any,
     timeStamp: number,
-    onApprove: () => void,
-    onReject: () => void,
-
 }
 
 const formatTime = (timeStamp: number): any => {
@@ -29,10 +26,6 @@ const App: FC<Props> = (props) => {
             <View>
                 <Text>{props.message}</Text>
                 <Text>{formatTime(props.timeStamp)}</Text>
-            </View>
-            <View>
-                <Button title="Approve" onPress={() => { props.onApprove() }} />
-                <Button title="Reject" onPress={() => { props.onReject() }} />
             </View>
         </View>
     )
